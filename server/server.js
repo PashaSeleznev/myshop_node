@@ -3,8 +3,9 @@ const cors = require('cors')
 const mongoose = require('mongoose')
 const userRoutes = require('./routes/user-route')
 const app = express()
+require('dotenv').config()
 
-const db = 'mongodb+srv://Pasha:Pashkodranichman17@cluster0.boxh6mh.mongodb.net/node-test?retryWrites=true&w=majority&appName=Cluster0'
+const db = process.env.MONGO_URL
 
 mongoose
     .connect(db)
