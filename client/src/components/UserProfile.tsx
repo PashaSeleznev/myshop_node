@@ -1,5 +1,6 @@
 import { FC } from "react"
 import { User } from "../containers/AccountContainer"
+import { deleteUser } from "../reducers/actions"
 
 type UserProfileProps = {
     logUser: User,
@@ -7,7 +8,7 @@ type UserProfileProps = {
     clearLocalStorage: () => void,
     setLogUser: (user: User) => void, 
     setIsEntered: (bool: boolean) => void,
-    deleteUser: (userId: User['_id']) => void
+    fetchUsers: () => void,
 }
 
 const UserProfile: FC<UserProfileProps> = ({
@@ -16,10 +17,8 @@ const UserProfile: FC<UserProfileProps> = ({
     clearLocalStorage,
     setLogUser, 
     setIsEntered,
-    deleteUser
+    fetchUsers
 }) => {
-
-    
 
     return (
         <div className="data">
@@ -34,7 +33,7 @@ const UserProfile: FC<UserProfileProps> = ({
               <button onClick={() => startEditing(logUser)}>Изменить</button>
               <button onClick={() => clearLocalStorage()}>Выйти</button>
               <button onClick = {() => {
-                deleteUser(logUser._id)
+                deleteUser({ userId: logUser._id, fetchUsers, clearLocalStorage })
                 setIsEntered(false)
                 setLogUser({ _id: 0, name: '', password: '', email: '' })
               }}>Удалить аккаунт</button>

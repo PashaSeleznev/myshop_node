@@ -1,17 +1,20 @@
 import { FC } from "react"
 import { User } from "../containers/AccountContainer"
+import { editUser } from "../reducers/actions"
 
 type UserProfileEditProps = {
     editedUser: User | null,
     setEditedUser: (user: User | null) => void,
-    editUser: () => void,
+    setLogUser: (user: User) => void,
+    fetchUsers: () => void,
     setEditingUser: (user: User | null) => void
 }
 
 const UserProfileEdit: FC<UserProfileEditProps> = ({
     editedUser,
     setEditedUser,
-    editUser,
+    setLogUser,
+    fetchUsers,
     setEditingUser
 }) => {
   return (
@@ -45,7 +48,7 @@ const UserProfileEdit: FC<UserProfileEditProps> = ({
               </li>
             </ul>
             <section className="button-section">
-              <button onClick={editUser}>Сохранить</button>
+              <button onClick={() => editUser({editedUser, setLogUser, setEditingUser, fetchUsers})}>Сохранить</button>
               <button onClick={() => setEditingUser(null)}>Отмена</button>
             </section>
           </div>

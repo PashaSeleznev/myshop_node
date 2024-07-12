@@ -38,33 +38,6 @@ const AccountContainer: FC<AccountPageProps> = ({showDeleteModal, handleCancel, 
     dispatch(fetchUsersAction());
   }, [dispatch]);
 
-  const toCreate = async () => {
-    const emailCheck = users.find(user => user.email === newUser.email);
-    if (!emailCheck) {
-      try {
-        const response = await fetch('/users', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(newUser),
-        });
-        if (!response.ok) {
-          throw new Error('Ошибка сети при отправке данных!');
-        }
-        const data = await response.json();
-        console.log('Данные успешно отправлены:', data);
-        fetchUsers();
-        setNewUser({ ...newUser, name: '', password: '', email: '' });
-        setIsRegistered(true);
-      } catch (error) {
-        console.error('Ошибка при отправке данных:', error);
-      }
-    } else {
-      setHasRegError(true);
-    }
-  };
-
   const toEnter = () => {
     const foundUser = users.find(user => user.email === logUser.email && user.password === logUser.password)
     if (foundUser) {
@@ -77,60 +50,9 @@ const AccountContainer: FC<AccountPageProps> = ({showDeleteModal, handleCancel, 
     }
   }
 
-  const deleteUser = async (userId: User['_id']) => {
-    try {
-      const response = await fetch(`/users/${userId}`, {
-        method: 'DELETE',
-      });
-      if (!response.ok) {
-        throw new Error('Ошибка сети при удалении пользователя!');
-      }
-      console.log(`Пользователь с ID ${userId} был удален.`);
-      fetchUsers()
-      clearLocalStorage()
-    } catch (error) {
-      console.error('Ошибка при удалении пользователя:', error);
-    }
-  };
-
   const startEditing = (user: User) => {
     setEditingUser(user);
   };
-
-  const editUser = async() => {
-    if (editedUser) {
-      try {
-        const updatedUser = {
-          name: editedUser.name,
-          password: editedUser.password,
-          email: editedUser.email
-        };
-  
-        const response = await fetch(`/users/${editedUser._id}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatedUser),
-        });
-  
-        if (response.ok) {
-          console.log('Пользователь обновлен');
-          store.set('logUser', editedUser)
-          setLogUser(editedUser)
-
-        } else {
-          console.error('Ошибка при обновлении пользователя');
-        }
-      } catch (error) {
-        console.error('Ошибка при отправке запроса', error);
-      }
-    } else {
-      console.log('Нет пользователя для редактирования');
-    }
-    setEditingUser(null);
-    fetchUsers()
-  }
 
   const clearLocalStorage = () => {
     setIsEntered(false)
@@ -173,7 +95,7 @@ const AccountContainer: FC<AccountPageProps> = ({showDeleteModal, handleCancel, 
           clearLocalStorage = {clearLocalStorage}
           setLogUser = {setLogUser}
           setIsEntered = {setIsEntered}
-          deleteUser = {deleteUser}
+          fetchUsers = {fetchUsers}
          />
       )}
 
@@ -181,7 +103,8 @@ const AccountContainer: FC<AccountPageProps> = ({showDeleteModal, handleCancel, 
         <UserProfileEdit 
           editedUser = {editedUser}
           setEditedUser = {setEditedUser}
-          editUser = {editUser}
+          setLogUser = {setLogUser}
+          fetchUsers = {fetchUsers}
           setEditingUser = {setEditingUser}
           />
       )}
@@ -190,7 +113,8 @@ const AccountContainer: FC<AccountPageProps> = ({showDeleteModal, handleCancel, 
         <RegisterForm 
           newUser = {newUser}
           setNewUser = {setNewUser}
-          toCreate = {toCreate}
+          fetchUsers = {fetchUsers}
+          setHasRegError = {setHasRegError}
           hasRegError = {hasRegError}
           setIsRegistered = {setIsRegistered}
           />
